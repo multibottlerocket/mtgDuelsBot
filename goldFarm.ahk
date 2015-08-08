@@ -30,7 +30,7 @@ creatureY := 525
 		selectEasyBot(clickDelay)
 		clickContinue(clickDelay)
 		advanceTurn(clickDelay)
-		; Sleep, 5000
+		Sleep, 5000 ; let combat play out
 	}
 
 LongMouseClick(mouseButton, x, y) {
