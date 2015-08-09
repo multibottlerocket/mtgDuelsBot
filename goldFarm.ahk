@@ -2,7 +2,6 @@ clickDelay := 500
 handY := 980
 playX := 960
 playY := 640
-creatureY := 525
 
 ; barely outside of hand: y = 750
 
@@ -25,7 +24,7 @@ creatureY := 525
 	IfWinNotActive, Magic Origins, , WinActivate, Magic Origins, 
 	WinWaitActive, Magic Origins, 
 	while(true) {
-		sacCreatures(creatureY, clickDelay)
+		sacCreatures(clickDelay)
 		dumpHand(handY, clickDelay)
 		selectEasyBot(clickDelay)
 		clickContinue(clickDelay)
@@ -83,8 +82,13 @@ advanceTurn(clickDelay) {
 }
 
 ; this is so we don't get trapped if the opponent makes us select a creature to sac
-sacCreatures(creatureY, clickDelay) {
-	LongMouseClick(left,  915,  creatureY)
+sacCreatures(clickDelay) {
+	LongMouseClick(left,  915,  525)
+	Sleep, clickDelay
+	dismissWarning(clickDelay)
+	Send {WheelDown} ; get rid of creature zoom if we select a creature with an activated ability
+	Sleep, clickDelay
+	LongMouseClick(left,  915,  455)
 	Sleep, clickDelay
 	dismissWarning(clickDelay)
 	Send {WheelDown} ; get rid of creature zoom if we select a creature with an activated ability
