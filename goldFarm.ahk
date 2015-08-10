@@ -1,7 +1,9 @@
 clickDelay := 500
 handY := 980
 playX := 960
-playY := 640
+playY := 672
+; 614 is safe y for clicking for normal gampely
+; 672 is safe when board is full and zooms out
 
 ; barely outside of hand: y = 750
 
@@ -19,17 +21,34 @@ playY := 640
 
 #s::Reload
 
+#w::
+launchGame()
+Return
+
 #o::
-	WinWait, Magic Origins, 
-	IfWinNotActive, Magic Origins, , WinActivate, Magic Origins, 
-	WinWaitActive, Magic Origins, 
 	while(true) {
-		sacCreatures(clickDelay)
-		dumpHand(handY, clickDelay)
-		selectEasyBot(clickDelay)
-		clickContinue(clickDelay)
-		advanceTurn(clickDelay)
-		Sleep, 5000 ; let combat play out
+		WinWait, Magic Origins, 
+		IfWinNotActive, Magic Origins, , WinActivate, Magic Origins, 
+		WinWaitActive, Magic Origins, 
+		i := 0 ; 32 second loop
+		while(i < 240) {
+			sacCreatures(clickDelay)
+			dumpHand(handY, clickDelay)
+			;selectEasyBot(clickDelay)
+			selectHardBot(clickDelay)
+			clickContinue(clickDelay)
+			advanceTurn(clickDelay)
+			Sleep, 5000 ; let combat play out
+			IfWinExist, Fatal Error 
+			{
+				WinClose
+				Break
+			}
+			i := i + 1
+		}
+		Process, Close, MagicDuels.exe
+		Sleep, 5000
+		launchGame()
 	}
 
 LongMouseClick(mouseButton, x, y) {
@@ -73,6 +92,13 @@ selectEasyBot(clickDelay) {
 	dismissWarning(clickDelay)
 }
 
+selectHardBot(clickDelay) {
+	LongMouseClick(left, 1310, 720)
+	Sleep, clickDelay
+	dismissWarning(clickDelay)
+}
+
+
 advanceTurn(clickDelay) {
 	LongMouseClick(left,  1783,  979)
 	Sleep, clickDelay
@@ -98,4 +124,20 @@ sacCreatures(clickDelay) {
 ; starts and exits match
 clickContinue(clickDelay) {
 	LongMouseClick(left, 1842, 1021)
+}
+
+; start Magic:Duels and get to Solo Battle menu
+launchGame() {
+	Run, steam://rungameid/316010
+	WinWait, Magic Origins, 
+	IfWinNotActive, Magic Origins, , WinActivate, Magic Origins, 
+	WinWaitActive, Magic Origins, 
+	Sleep, 20000 ; let game load
+	LongMouseClick(left, 1310, 200) ; click to start
+	Sleep, 15000
+	LongMouseClick(left, 1510, 200) ; dismiss quests window
+	Sleep, 3000
+	LongMouseClick(left, 250, 420) ; go to "Battle Mode"
+	Sleep, 2000
+	LongMouseClick(left, 257, 483) ; "Solo Battle"
 }
